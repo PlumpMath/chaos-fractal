@@ -97,7 +97,13 @@
   
   user>  (>!! in-chan 1)(>!! in-chan 2)(>!! in-chan 3)(>!! in-chan 4)(>!! in-chan 5)(>!! in-chan 6)
   
-  Will print only 6."  
+  Will print only 6.
+
+
+  user>  (>!! in-chan 1)(<!! (timeout 600))(>!! in-chan 2)
+
+  Will print 1 and 2"
+
   [delay-ms in-chan out-chan]
   (go
    (loop [delayed (chan)]
@@ -126,7 +132,7 @@
 
 (defn build-number-input [opts input-el out-chan]
   (let [el-evts (chan)
-        evts-throttled (chan) ;; does it matter where you put this?
+        evts-throttled (chan)
         evt-vals (chan) 
         evt-deduped-vals (chan)
         floats out-chan]
@@ -146,6 +152,8 @@
                  (throttle (opts :throttle-ms) ?evt-vals ?evts-throttled)
                  (dedupe evts-throttled ?evt-deduped-vals)
                  (map-when-chan float* ?evt-deduped-vals ?floats))))
+
+  ;; ---
   
   (macroexpand-1
    (run
@@ -294,7 +302,8 @@
      (recur
       (alt!
        in-chan ([val'] (>! out-chan val') val')
-       :default (do (>! out-chan val) val))))))
+       :default (do (>! out-chan val) val)
+       :priority true)))))
 
 
 ;; it's going to take too long to get this working

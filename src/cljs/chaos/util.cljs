@@ -9,7 +9,3 @@
 (defn map-chan [f in-chan out-chan]  
   (go (while true (>! out-chan (f (<! in-chan))))))
 
-(defn ch->seq [ch]
-  (lazy-seq
-   (cons (<!! ch)
-         (ch->seq ch))))
