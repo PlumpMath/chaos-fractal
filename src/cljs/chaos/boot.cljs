@@ -106,19 +106,22 @@
   (partial update-keys {:transform rewrite-transform
                         :style rewrite-style}))
 
+(defn first-by-class [container class]
+  (.item (.getElementsByClassName container class) 0))
+
 (defn attach-to [container]
-  (let [shape-el (.item (.getElementsByName container "chaos-shape") 0)
-        ratio-el (.item (.getElementsByName container "chaos-ratio") 0)
-        iterations-el (.item (.getElementsByName container "chaos-iterations") 0)
-        button-el (.item (.getElementsByTagName container "button") 0)
+  (let [shape-el (first-by-class container "chaos-shape")
+        ratio-el (first-by-class container "chaos-ratio")
+        iterations-el (first-by-class container "chaos-iterations")
+        button-el (first-by-class container "chaos-button")
+        render-el (first-by-class container "chaos-render")
         out-chan (chan)]
     
-    (bootstrap-input-system {:throttle-ms 200 :throttle 200}
+    (input/bootstrap-input-system {:throttle-ms 200 :throttle 200}
                             {:ratio 0 :iterations 0 :shape []}
                             {:ratio ratio-el :iterations iterations-el
                              :shape shape-el :button button-el}
                             out-chan)
-
 
     (go (while true (.log js/console (str (<! out-chan)))))))
 
