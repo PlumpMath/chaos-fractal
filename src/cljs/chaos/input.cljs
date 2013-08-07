@@ -47,12 +47,13 @@
     (dedupe shape-description-text* shape-description-text)
     (map-when-chan parse-shape-description shape-description-text out-chan)))
 
-(defn build-number-input [opts input-el out-chan]
+(defn build-number-input [opts input-el initial-val out-chan]
   (let [el-evts (chan)
         evts-throttled (chan)
         evt-vals (chan) 
         evt-deduped-vals (chan)
         floats out-chan]
+    (set! (. input-el -value) (str initial-val))
     (listen-for-change-events input-el el-evts)
     (throttle (opts :throttle-ms) el-evts evts-throttled)
     (map-chan retrieve-current-value evts-throttled evt-vals)
@@ -71,8 +72,8 @@
         current-state (atom initial-vals)]
     
     (build-shape-input opts (input-els :shape) (initial-vals :shape) shape-input)
-    (build-number-input opts (input-els :ratio) ratio-input)
-    (build-number-input opts (input-els :iterations) iterations-input)
+    (build-number-input opts (input-els :ratio) (initial-vals :ratio) ratio-input)
+    (build-number-input opts (input-els :iterations) (initial-vals :iterations) iterations-input)
 
     (state-accumulator initial-vals
                        {:shape shape-input

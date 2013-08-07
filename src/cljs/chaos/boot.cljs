@@ -90,13 +90,13 @@
         out-chan (chan)]
     
     (input/bootstrap-input-system {:throttle-ms 200 :throttle 200}
-                                  {:ratio 0 :iterations 0 :shape [[0 250]
+                                  {:ratio 0.5 :iterations 10e3 :shape [[0 250]
                                                                   [-250 -250]
                                                                   [250 -250]]}
                                   {:ratio ratio-el :iterations iterations-el
                                    :shape shape-el :button button-el}
                                   out-chan)
-
+    
     (go (while true
           (let [definition (<! out-chan)
                 svg (make-svg {:width 500 :height 500})
