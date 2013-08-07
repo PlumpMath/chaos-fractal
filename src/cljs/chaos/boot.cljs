@@ -8,8 +8,6 @@
             [clojure.string :as str])
   (:require-macros [cljs.core.async.macros :as m :refer [go alts! alt!]]))
 
-;; WIP
-
 (def svg-ns "http://www.w3.org/2000/svg")
 
 (defn attr-map->str [attrs]
@@ -66,17 +64,6 @@
          (render-game render-surface {:n n} game-chan)
          (when interval (<! (timeout interval)))
          (recur (* 2 n)))))))
-
-(defn update-keys [rewrite-m m]
-  (reduce (fn [m [k f]] (assoc m k (f (m k)))) m rewrite-m))
-
-(defn rewrite-transform [parms]
-  (str "transform("
-       (str/join ", " parms)
-       ")"))
-
-(defn rewrite-attribute-map [m]
-  (partial update-keys {:transform rewrite-transform}))
 
 (defn first-by-class [container class]
   (.item (.getElementsByClassName container class) 0))

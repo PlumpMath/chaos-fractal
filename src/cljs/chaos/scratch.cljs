@@ -305,6 +305,18 @@
        :default (do (>! out-chan val) val)
        :priority true)))))
 
+(defn update-keys [rewrite-m m]
+  (reduce (fn [m [k f]] (assoc m k (f (m k)))) m rewrite-m))
+
+(defn rewrite-transform [parms]
+  (str "transform("
+       (str/join ", " parms)
+       ")"))
+
+(defn rewrite-attribute-map [m]
+  (partial update-keys {:transform rewrite-transform}))
+
+
 
 ;; it's going to take too long to get this working
 ;; (comment (def system

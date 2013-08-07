@@ -92,28 +92,3 @@
      (while true
        (<! button-clicked)
        (>! out-chan @current-state)))))
-
-;; chaos.input> (def shape-el (.item (.getElementsByName js/document "chaos-shape") 0))
-;; #<[object HTMLTextAreaElement]>
-;; nil
-;; chaos.input> (def ratio-el (.item (.getElementsByName js/document "ratio") 0))
-;; nil
-;; chaos.input> (def ratio-el (.item (.getElementsByName js/document "chaos-ratio") 0))
-;; #<[object HTMLInputElement]>
-;; nil
-;; chaos.input> (def iterations-el (.item (.getElementsByName js/document "chaos-iterations") 0))a
-;; #<[object HTMLInputElement]>
-;; nil
-;; WARNING: Use of undeclared Var chaos.input/a
-;; nil
-;; chaos.input> (def button-el (.item (.getElementsByTagName js/document "button") 0))
-;; #<[object HTMLButtonElement]>
-;; nil
-;; chaos.input> (def out-chan (chan))
-;; #<[object Object]>
-;; nil
-;; chaos.input> (bootstrap-input-system {:throttle-ms 200 :throttle 200}
-;;                                      {:ratio 0 :iterations 0 :shape []}
-;;                                      {:ratio ratio-el :iterations iterations-el
-;;                                       :shape shape-el :button button-el}
-;;                                      out-chan)
