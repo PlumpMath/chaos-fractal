@@ -69,9 +69,11 @@
 
 
 (def make-button (partial make-el "button"))
-(def make-svg (partial make-el-ns svg-ns "svg" {}))
+(def make-svg (comp (partial make-el-ns svg-ns "svg")
+                    (partial merge {:version "1.1"})))
 (def make-g (partial make-el-ns svg-ns "g"))
 (def make-circle (partial make-el-ns svg-ns "circle"))
+(def make-rect (partial make-el-ns svg-ns "rect"))
 
 (defn render-game
   "A simple renderer"
@@ -84,13 +86,13 @@
            (dom/append! inner-surface (make-circle
                                        {:cx (first p)
                                         :cy (second p)
-                                        :r 0.1})))
+                                        :r 1})))
          (recur (dec i))))
 
      (dom/append! render-surface inner-surface))))
 
 (defn exponential-incremental-render-game [render-surface options game-chan]
-  (let [{:keys [f interval max initial-n]} options
+  (let [{:keys [interval max initial-n]} options
         initial-n (or initial-n 1)]
     (go
      (loop [n 1]
@@ -102,9 +104,13 @@
 (defn update-keys [rewrite-m m]
   (reduce (fn [m [k f]] (assoc m k (f (m k)))) m rewrite-m))
 
+(defn rewrite-transform [parms]
+  (str "transform("
+       (str/join ", " parms)
+       ")"))
+
 (defn rewrite-attribute-map [m]
-  (partial update-keys {:transform rewrite-transform
-                        :style rewrite-style}))
+  (partial update-keys {:transform rewrite-transform}))
 
 (defn first-by-class [container class]
   (.item (.getElementsByClassName container class) 0))
@@ -123,7 +129,21 @@
                              :shape shape-el :button button-el}
                             out-chan)
 
-    (go (while true (.log js/console (str (<! out-chan)))))))
+    (go (while true
+          (let [definition (<! out-chan)
+                svg (make-svg {:width 500 :height 500})
+                rect-bg (make-rect {:width "100%" :height "100%" :fill "white"})
+                g (make-g {:transform "translate(250, 250), scale(1, -1)"})
+                game-chan (chan)]
+            (dom/prepend! render-el svg)
+            (dom/append! svg rect-bg)
+            (dom/append! svg g)
+            (fractal/chaos-game
+             (merge {:initial-position [(- (* 200 (.random js/Math)) 100) 
+                                        (- (* 200 (.random js/Math)) 100)]
+                     :next-position fractal/next-position}
+                    (select-keys definition [:shape :ratio]))
+             game-chan)
+            (exponential-incremental-render-game g {:interval 500 :max (:iterations definition)} game-chan))))))
 
-
-;; (attach-to (.item (.getElementsByClassName js/document  "chaos-container") 0))
+(attach-to js/document)
