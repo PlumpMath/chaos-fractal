@@ -8,40 +8,6 @@
             [clojure.string :as str])
   (:require-macros [cljs.core.async.macros :as m :refer [go alts! alt!]]))
 
-(def initial-state {:shape (list [0 70.7] [-50 0] [50 0])
-                    :ratio 0.5
-                    :initial-position [0 0]
-                    :next-position fractal/next-position})
-
-(def render-options {:n 10000})
-
-;; (declare build-controller)
-
-(defn boot-chaos-app "in your browser..." [initial-state container]
-  (let [result-container (make-div)
-        controller (build-controller initial-state (make-div) result-container)]
-    (dom/append! container controller)
-    (dom/append! container result-container)))
-
-
-(declare build-shape-input build-ratio-input build-go-button
-         fancy-render-surface render-initial-state render-game)
-
-(defn build-controller [initial container result-container]
-  (let [{:keys [shape ratio]} initial]
-    (go
-     (while true
-       (<! go-button-chan)
-       (let [initial-state (<! input-state-chan)
-             out-chan (chan)
-             render-surface (fancy-render-surface)]
-         (dom/append! result-container render-surface)
-    
-         (render-initial-state render-surface initial-state)
-         (render-game render-surface render-options out-chan)
-
-         (chaos-game input out-chan))))))
-
 ;; WIP
 
 (def svg-ns "http://www.w3.org/2000/svg")
@@ -124,10 +90,12 @@
         out-chan (chan)]
     
     (input/bootstrap-input-system {:throttle-ms 200 :throttle 200}
-                            {:ratio 0 :iterations 0 :shape []}
-                            {:ratio ratio-el :iterations iterations-el
-                             :shape shape-el :button button-el}
-                            out-chan)
+                                  {:ratio 0 :iterations 0 :shape [[0 250]
+                                                                  [-250 -250]
+                                                                  [250 -250]]}
+                                  {:ratio ratio-el :iterations iterations-el
+                                   :shape shape-el :button button-el}
+                                  out-chan)
 
     (go (while true
           (let [definition (<! out-chan)

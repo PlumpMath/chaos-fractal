@@ -30,11 +30,15 @@
                nil)))
        (str/split description \newline)))
 
-(defn build-shape-input [opts shape-el out-chan]
+(defn build-shape-input [opts shape-el initial-shape out-chan]
   (let [shape-events (chan)
         shape-events-throttled (chan)
         shape-description-text* (chan)
         shape-description-text (chan)]
+
+    (set! (. shape-el -innerHTML)
+          (str/join "\n"
+                    (map (partial str/join " ") initial-shape)))
     
     (listen-for-change-events shape-el shape-events)
     (throttle 200 shape-events  shape-events-throttled)
@@ -66,7 +70,7 @@
         button-clicked (chan)
         current-state (atom initial-vals)]
     
-    (build-shape-input opts (input-els :shape) shape-input)
+    (build-shape-input opts (input-els :shape) (initial-vals :shape) shape-input)
     (build-number-input opts (input-els :ratio) ratio-input)
     (build-number-input opts (input-els :iterations) iterations-input)
 
