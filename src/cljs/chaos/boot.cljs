@@ -99,13 +99,28 @@
          (when interval (<! (timeout interval)))
          (recur (* 2 n)))))))
 
-
-
 (defn update-keys [rewrite-m m]
   (reduce (fn [m [k f]] (assoc m k (f (m k)))) m rewrite-m))
-
 
 (defn rewrite-attribute-map [m]
   (partial update-keys {:transform rewrite-transform
                         :style rewrite-style}))
 
+(defn attach-to [container]
+  (let [shape-el (.item (.getElementsByName container "chaos-shape") 0)
+        ratio-el (.item (.getElementsByName container "chaos-ratio") 0)
+        iterations-el (.item (.getElementsByName container "chaos-iterations") 0)
+        button-el (.item (.getElementsByTagName container "button") 0)
+        out-chan (chan)]
+    
+    (bootstrap-input-system {:throttle-ms 200 :throttle 200}
+                            {:ratio 0 :iterations 0 :shape []}
+                            {:ratio ratio-el :iterations iterations-el
+                             :shape shape-el :button button-el}
+                            out-chan)
+
+
+    (go (while true (.log js/console (str (<! out-chan)))))))
+
+
+;; (attach-to (.item (.getElementsByClassName js/document  "chaos-container") 0))

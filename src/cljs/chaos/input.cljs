@@ -112,24 +112,3 @@
 ;;                                      {:ratio ratio-el :iterations iterations-el
 ;;                                       :shape shape-el :button button-el}
 ;;                                      out-chan)
-
-
-
-(def shape-el (.item (.getElementsByName js/document "chaos-shape") 0))
-(def ratio-el (.item (.getElementsByName js/document "chaos-ratio") 0))
-(def iterations-el (.item (.getElementsByName js/document "chaos-iterations") 0))
-(def button-el (.item (.getElementsByTagName js/document "button") 0))
-(def out-chan (chan))
-(bootstrap-input-system {:throttle-ms 200 :throttle 200}
-                                     {:ratio 0 :iterations 0 :shape []}
-                                     {:ratio ratio-el :iterations iterations-el
-                                      :shape shape-el :button button-el}
-                                     out-chan)
-
-(def ctrl (chan))
-(go (loop []
-      (let [[val ch] (alts! [ctrl out-chan])]
-           (condp = ch
-             ctrl nil
-             out-chan (do (.log js/console (str val))
-                          (recur))))))
