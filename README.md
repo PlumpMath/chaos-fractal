@@ -1,13 +1,9 @@
 # chaos-fractal
 
-A Clojure library designed to ... well, that part is up to you.
-
-## Usage
-
-FIXME
+http://lab.thisisacomputer.com/chaos/
 
 ## License
 
-Copyright © 2013 FIXME
+Copyright © 2013 Tim Reinke
 
 Distributed under the Eclipse Public License, the same as Clojure.
