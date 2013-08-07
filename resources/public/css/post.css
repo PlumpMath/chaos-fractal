@@ -1,0 +1,47 @@
+body
+{
+    margin-left: auto;
+    margin-right: auto;
+    width: 900px;
+}
+
+.chaos-container
+{
+    width: 500px;
+}
+
+.chaos-controller-wrapper
+{
+    text-align: center;
+    margin: 30px;
+}
+
+.chaos-controller
+{
+    padding-bottom: 10px;
+    background: #fff;
+    display: inline-block;
+    margin-right: 10px;
+    margin-bottom: -15px;
+}
+
+.chaos-control
+{
+    text-align: center;
+    float: left;
+    width: 200px;
+}
+
+
+.chaos-controller button 
+{
+    margin-top: 5px;
+    padding: 5px;
+    background: #5f3c93;
+    color: #fff;
+    width: 100px;
+    border: none;
+    cursor: pointer;
+    font-family: Courier;
+    font-size: 1.2em;
+}

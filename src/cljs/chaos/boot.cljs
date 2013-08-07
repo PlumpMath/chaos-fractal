@@ -101,4 +101,26 @@
              game-chan)
             (exponential-incremental-render-game g {:interval 500 :max (:iterations definition)} game-chan))))))
 
-(attach-to js/document)
+
+(defn attach-example [container]
+  (let [button-el (first-by-class container "chaos-button")
+        render-target (css/sel container "g")
+        button-chan (chan)
+        game-chan (chan)]
+    (input/listen-for-event button-el "click" button-chan)
+    (go
+     (<! button-chan)
+     (let [game-chan (chan)]
+       (fractal/chaos-game
+        {:initial-position [0 0]
+         :next-position fractal/next-position
+         :ratio 0.5
+         :iterations 10e3
+         :shape [[0 250]
+                 [-250 -250]
+                 [250 -250]]}
+        game-chan)
+       (exponential-incremental-render-game
+        render-target
+        {:interval 500 :max 10e3}
+        game-chan)))))
