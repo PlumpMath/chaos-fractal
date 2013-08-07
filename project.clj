@@ -17,10 +17,15 @@
   :hooks [leiningen.cljsbuild]
 
   :cljsbuild {:builds
-              [{:source-paths ["src/cljs"]
+              {:main
+               {:source-paths ["src/cljs" "dev/cljs"]
                 :compiler {:output-to "resources/public/js/chaos.js"
-                           :optimizations :whitespace}}]}
+                           :optimizations :whitespace}}
+               :prod
+               {:source-paths ["src/cljs"]
+                :compiler {:output-to "resources/public/js/chaos-prod.js"
+                           :optimizations :advanced}}}}
 
-  :profiles {:dev {:source-paths ["dev"]
+  :profiles {:dev {:source-paths ["dev/clj"]
                    :dependencies [[com.cemerick/piggieback "0.0.5"]]
                    :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}})

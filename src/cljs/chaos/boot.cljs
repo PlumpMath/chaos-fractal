@@ -68,7 +68,7 @@
 (defn first-by-class [container class]
   (.item (.getElementsByClassName container class) 0))
 
-(defn attach-to [container]
+(defn ^:export attach-to [container]
   (let [shape-el (first-by-class container "chaos-shape")
         ratio-el (first-by-class container "chaos-ratio")
         iterations-el (first-by-class container "chaos-iterations")
@@ -102,7 +102,7 @@
             (exponential-incremental-render-game g {:interval 500 :max (:iterations definition)} game-chan))))))
 
 
-(defn attach-example [container]
+(defn ^:export attach-example [container]
   (let [button-el (first-by-class container "chaos-button")
         render-target (css/sel container "g")
         button-chan (chan)
