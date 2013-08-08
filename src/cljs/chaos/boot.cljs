@@ -38,20 +38,36 @@
 (defn first-by-class [container class]
   (.item (.getElementsByClassName container class) 0))
 
+(defn generate-shape [r n]
+  (let [d-theta (/ (* 2 Math/PI) n)
+        theta0 (/ Math/PI 2)]
+    (for [theta (map (fn [x] (+ theta0 (* x d-theta )))
+                     (range 0 n))]
+      [(* r (Math/cos theta)) (* r (Math/sin theta))])))
+
+(def shapes
+  (map vector
+       ["triangle" "square" "pentagon" "hexagon" "septagon" "octogon"]
+       (map (fn [x] (generate-shape 100 (+ 3 n))) (range);; errr.... domain
+            )))
+
 (defn ^:export attach-to [container]
   (let [shape-el (first-by-class container "chaos-shape")
+        shape-select-el (first-by-class container "chaos-shape-select")
         ratio-el (first-by-class container "chaos-ratio")
         iterations-el (first-by-class container "chaos-iterations")
         button-el (first-by-class container "chaos-button")
         render-el (first-by-class container "chaos-render")
         out-chan (chan)]
     
-    (input/bootstrap-input-system {:throttle-ms 200 :throttle 200}
+    (input/bootstrap-input-system {:throttle-ms 200
+                                   :shapes shapes}
                                   {:ratio 0.5 :iterations 10e3 :shape [[0 250]
-                                                                  [-250 -250]
-                                                                  [250 -250]]}
+                                                                       [-250 -250]
+                                                                       [250 -250]]}
                                   {:ratio ratio-el :iterations iterations-el
-                                   :shape shape-el :button button-el}
+                                   :shape shape-el :shapes-select shape-select-el
+                                   :button button-el}
                                   out-chan)
     
     (go (while true

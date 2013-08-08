@@ -42,6 +42,13 @@
     (dedupe shape-description-text* shape-description-text)
     (map-when-chan parse-shape-description shape-description-text out-chan)))
 
+(defn build-shape-select-input [opts shape-select-el initial-selections out-chan]
+  (let [events (chan)
+        selected (chan)]
+
+    (listen-for-change-events shape-select-el events)
+    (map-chan (fn [e] (.-selectedIndex (.-target shape-select-el))) selected)))
+
 (defn build-number-input [opts input-el initial-val out-chan]
   (let [el-evts (chan)
         evts-throttled (chan)
@@ -60,6 +67,7 @@
                               input-els
                               out-chan]
   (let [shape-input (chan)
+        shape-select-input (chan)
         ratio-input (chan)
         iterations-input (chan)
         input-state (chan)
@@ -67,6 +75,7 @@
         current-state (atom initial-vals)]
     
     (build-shape-input opts (input-els :shape) (initial-vals :shape) shape-input)
+    (build-shape-select-input opts (input-els :shape-select) (opts :shapes) shape-select-input)
     (build-number-input opts (input-els :ratio) (initial-vals :ratio) ratio-input)
     (build-number-input opts (input-els :iterations) (initial-vals :iterations) iterations-input)
 
