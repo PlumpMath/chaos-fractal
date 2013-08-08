@@ -14,7 +14,7 @@
 (defn listen-for-change-events
   "Queues into chan events that (may) have changed the input element"
   [el chan]
-  (doseq [type ["propertychange" "keyup" "input" "paste"]]
+  (doseq [type ["change" "propertychange" "keyup" "input" "paste"]]
     (listen-for-event el type chan)))
 
 
