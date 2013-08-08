@@ -37,7 +37,7 @@
                     (map (partial str/join " ") initial-shape)))
     
     (listen-for-change-events shape-el shape-events)
-    (throttle 200 shape-events  shape-events-throttled)
+    (throttle (opts :throttle-ms) shape-events  shape-events-throttled)
     (map-chan (fn [e] (.-value (.-target e))) shape-events-throttled shape-description-text*)
     (dedupe shape-description-text* shape-description-text)
     (map-when-chan parse-shape-description shape-description-text out-chan)))
