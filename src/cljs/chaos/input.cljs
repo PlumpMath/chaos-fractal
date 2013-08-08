@@ -17,10 +17,6 @@
   (doseq [type ["change" "propertychange" "keyup" "input" "paste"]]
     (listen-for-event el type chan)))
 
-
-(defn element-value [el]
-  (.-value el))
-
 (defn parse-shape-description [description]  
   (map (fn [line]
          (let [[x-str y-str & garbage] (str/split line \space)
@@ -42,8 +38,7 @@
     
     (listen-for-change-events shape-el shape-events)
     (throttle 200 shape-events  shape-events-throttled)
-    (map-chan (fn [e]
-                (element-value (.-target e))) shape-events-throttled shape-description-text*)
+    (map-chan (fn [e] (.-value (.-target e))) shape-events-throttled shape-description-text*)
     (dedupe shape-description-text* shape-description-text)
     (map-when-chan parse-shape-description shape-description-text out-chan)))
 
