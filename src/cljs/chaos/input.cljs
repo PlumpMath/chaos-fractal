@@ -17,14 +17,17 @@
   (doseq [type ["change" "propertychange" "keyup" "input" "paste"]]
     (listen-for-event el type chan)))
 
-(defn parse-shape-description [description]  
-  (map (fn [line]
-         (let [[x-str y-str & garbage] (str/split line \space)
-               x (float* x-str)
-               y (float* y-str)]
-           (if (and x y) [x y]
-               nil)))
-       (str/split description \newline)))
+(defn parse-shape-description [description]
+  (let [shape (map (fn [line]
+                         (let [[x-str y-str & garbage] (str/split line \space)
+                               x (float* x-str)
+                               y (float* y-str)]
+(if (and x y) [x y]
+                               nil)))
+                   (str/split description \newline))]
+    (if (some nil? shape)
+      nil
+      shape)))
 
 (defn build-shape-input [opts shape-el initial-shape out-chan]
   (let [shape-events (chan)
