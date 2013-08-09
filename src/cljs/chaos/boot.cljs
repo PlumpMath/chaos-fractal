@@ -1,5 +1,6 @@
 (ns chaos.boot
   (:require [chaos.fractal :as fractal :refer [chaos-game]]
+            [chaos.html :as html]
             [chaos.input :as input]
             [chaos.util :refer [map-chan ch->seq]]            
             [cljs.core.async :as async :refer [>! <! chan timeout]]            
@@ -7,37 +8,6 @@
             [domina.css :as css]
             [clojure.string :as str])
   (:require-macros [cljs.core.async.macros :as m :refer [go alts! alt!]]))
-
-(def svg-ns "http://www.w3.org/2000/svg")
-
-(defn attr-map->str [attrs]
-  (str/join " "
-            (map (fn [[k v]]
-                   (str (name k) "=\"" v "\""))
-                 attrs)))
-
-(defn make-el
-  ([el-name attrs] (make-el el-name attrs nil))
-  ([el-name attrs inner]
-     (let [el (.createElement js/document el-name)]
-       (doseq [[k v] attrs]
-         (.setAttribute el (name k) v))
-       (set! (.-innerHTML el) inner)
-       el)))
-
-(defn make-el-ns [ns el-name attrs]
-  (let [el (.createElementNS js/document ns el-name)]
-    (doseq [[k v] attrs]
-      (.setAttributeNS el nil (name k) v))
-    el))
-
-
-(def make-button (partial make-el "button"))
-(def make-svg (comp (partial make-el-ns svg-ns "svg")
-                    (partial merge {:version "1.1"})))
-(def make-g (partial make-el-ns svg-ns "g"))
-(def make-circle (partial make-el-ns svg-ns "circle"))
-(def make-rect (partial make-el-ns svg-ns "rect"))
 
 (defn render-game
   "A simple renderer"
@@ -47,7 +17,7 @@
      (loop [i (options :n)]
        (when (> i 0)
          (let [p (<! game-chan)]
-           (dom/append! inner-surface (make-circle
+           (dom/append! inner-surface (html/make-circle
                                        {:cx (first p)
                                         :cy (second p)
                                         :r 1})))
@@ -86,9 +56,9 @@
     
     (go (while true
           (let [definition (<! out-chan)
-                svg (make-svg {:width 500 :height 500})
-                rect-bg (make-rect {:width "100%" :height "100%" :fill "white"})
-                g (make-g {:transform "translate(250, 250), scale(1, -1)"})
+                svg (html/make-svg {:width 500 :height 500})
+                rect-bg (html/make-rect {:width "100%" :height "100%" :fill "white"})
+                g (html/make-g {:transform "translate(250, 250), scale(1, -1)"})
                 game-chan (chan)]
             (dom/prepend! render-el svg)
             (dom/append! svg rect-bg)
